@@ -3,952 +3,666 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق تتبع الصلوات المتقدم</title>
+    <title>متتبع الصلوات الإسلامية</title>
     <style>
-        :root {
-            --primary-color: #4CAF50;
-            --secondary-color: #2196F3;
-            --warning-color: #f44336;
-            --text-color: #333;
-            --bg-color: #f9f9f9;
-            --card-bg: white;
-            --prayer-not-done: #ffebee;
-            --prayer-done: #e8f5e9;
-            --prayer-score-high: #81c784;
-            --prayer-score-medium: #ffb74d;
-            --prayer-score-low: #e57373;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            max-width: 600px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            direction: rtl;
-        }
-
-        .app-container {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: var(--secondary-color);
-            margin: 0;
-            font-size: 1.8rem;
-        }
-
-        .date {
-            color: #666;
-            font-size: 1rem;
-            margin-top: 5px;
-        }
-
-        .progress-container {
-            margin: 20px 0;
-        }
-
-        .progress-bar {
-            height: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            margin-bottom: 5px;
         }
 
-        .progress-fill {
-            height: 100%;
-            background-color: var(--primary-color);
-            border-radius: 5px;
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
             text-align: center;
-            font-size: 0.9rem;
         }
 
-        .daily-score {
-            text-align: center;
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
             font-size: 1.1rem;
-            font-weight: bold;
-            margin: 15px 0;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #f5f5f5;
-        }
-        
-        .daily-score span {
-            font-size: 1.3rem;
+            opacity: 0.9;
         }
 
-        .prayers-list {
-            list-style: none;
-            padding: 0;
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
         }
 
-        .prayer-item {
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            background-color: var(--prayer-not-done);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
         }
 
-        .prayer-item.done {
-            background-color: var(--prayer-done);
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+
+        input, select {
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .date-info {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .date-info h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .prayers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .prayer-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .prayer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .prayer-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            cursor: pointer;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
         }
 
         .prayer-name {
-            flex: 1;
-            font-weight: bold;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .prayer-time {
             font-size: 1.1rem;
-        }
-
-        .prayer-checkbox {
-            margin-right: 10px;
-            transform: scale(1.2);
-        }
-
-        .prayer-message {
-            font-size: 0.85rem;
-            margin-top: 5px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            height: 20px;
-        }
-
-        .prayer-message.show {
-            opacity: 1;
-        }
-
-        .prayer-done-message {
-            color: var(--primary-color);
-        }
-
-        .prayer-not-done-message {
-            color: var(--warning-color);
-        }
-
-        .prayer-details {
-            background-color: rgba(255, 255, 255, 0.6);
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .prayer-details.show {
-            display: block;
-        }
-
-        .detail-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .detail-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .detail-label {
-            flex: 1;
-            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 600;
         }
 
         .prayer-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-group {
             display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-title {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
         }
 
-        .option-btn {
-            padding: 5px 12px;
-            border: 1px solid #ddd;
-            background-color: white;
-            border-radius: 20px;
-            font-size: 0.85rem;
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
             transition: all 0.2s ease;
-        }
-
-        .option-btn.selected {
-            background-color: var(--secondary-color);
-            color: white;
-            border-color: var(--secondary-color);
-        }
-
-        .score-indicator {
-            display: flex;
-            align-items: center;
+            border: 1px solid #e9ecef;
             font-size: 0.85rem;
-            color: #555;
         }
 
-        .score-icon {
-            font-size: 1rem;
-            margin-left: 5px;
+        .custom-checkbox:hover {
+            background: #f8f9fa;
         }
 
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
+        .custom-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
             cursor: pointer;
-            border-bottom: 2px solid transparent;
+            min-width: 18px;
         }
 
-        .tab.active {
-            border-bottom: 2px solid var(--secondary-color);
-            color: var(--secondary-color);
-            font-weight: bold;
+        .prayer-card.completed {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #f8fff9, #f0fff4);
         }
 
-        .tab-content {
-            display: none;
+        .prayer-card.missed {
+            border-color: #dc3545;
+            background: linear-gradient(135deg, #fff8f8, #fff5f5);
         }
 
-        .tab-content.active {
-            display: block;
+        .prayer-card.delayed {
+            border-color: #ffc107;
+            background: linear-gradient(135deg, #fffef7, #fffcf0);
         }
 
-        .stats-container {
-            margin-top: 20px;
-        }
-
-        .day-stats {
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            background-color: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .day-stats-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        
-        .day-name {
-            font-weight: bold;
-        }
-        
-        .day-percentage {
-            color: var(--secondary-color);
-        }
-        
-        .day-progress {
-            height: 5px;
-            background-color: #e0e0e0;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-        
-        .day-progress-fill {
-            height: 100%;
-            background-color: var(--primary-color);
-            border-radius: 3px;
-        }
-
-        .day-details {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: #555;
-        }
-
-        .day-detail {
-            display: flex;
-            align-items: center;
-        }
-
-        .day-detail-icon {
-            margin-left: 5px;
-        }
-
-        .prayer-score {
-            font-weight: bold;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            margin-right: 5px;
-        }
-
-        .score-high {
-            background-color: var(--prayer-score-high);
+        .stats {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
         }
 
-        .score-medium {
-            background-color: var(--prayer-score-medium);
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .footer {
+            background: #2c3e50;
             color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
         }
 
-        .score-low {
-            background-color: var(--prayer-score-low);
-            color: white;
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
+        @media (max-width: 768px) {
+            .control-group {
+                flex-direction: column;
             }
             
-            .app-container {
-                padding: 15px;
+            .prayers-grid {
+                grid-template-columns: 1fr;
             }
             
-            h1 {
-                font-size: 1.5rem;
+            .prayer-options {
+                grid-template-columns: 1fr;
             }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
 
-            .option-btn {
-                padding: 4px 8px;
-                font-size: 0.75rem;
-            }
+        .reset-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(238, 90, 82, 0.3);
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <header>
-            <h1>تتبع الصلوات المتقدم</h1>
-            <div class="date" id="current-date"></div>
-        </header>
-
-        <div class="tabs">
-            <div class="tab active" data-tab="prayers">الصلوات اليومية</div>
-            <div class="tab" data-tab="stats">الإحصائيات</div>
+    <div class="container">
+        <div class="header">
+            <h1>🕌 متتبع الصلوات الإسلامية</h1>
+            <p>تتبع صلواتك اليومية وحافظ على علاقتك بالله</p>
         </div>
 
-        <div id="prayers-tab" class="tab-content active">
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
+        <div class="controls">
+            <div class="control-group">
+                <div class="control-item">
+                    <label for="dateInput">التاريخ:</label>
+                    <input type="date" id="dateInput">
                 </div>
-                <div class="progress-text" id="progress-text"></div>
+                <div class="control-item">
+                    <label for="countrySelect">المنطقة:</label>
+                    <select id="countrySelect">
+                        <option value="jordan">الأردن - عمان</option>
+                        <option value="saudi">السعودية - الرياض</option>
+                        <option value="egypt">مصر - القاهرة</option>
+                        <option value="uae">الإمارات - دبي</option>
+                        <option value="kuwait">الكويت</option>
+                        <option value="qatar">قطر - الدوحة</option>
+                        <option value="lebanon">لبنان - بيروت</option>
+                        <option value="syria">سوريا - دمشق</option>
+                        <option value="palestine">فلسطين - القدس</option>
+                        <option value="iraq">العراق - بغداد</option>
+                    </select>
+                </div>
+                <button class="reset-btn" onclick="resetDay()">إعادة تعيين اليوم</button>
             </div>
-
-            <div class="daily-score" id="daily-score">
-                تقييم اليوم: <span id="score-value">0</span>/<span id="score-max">100</span>
-            </div>
-
-            <ul class="prayers-list" id="prayers-list">
-                <!-- سيتم إضافة الصلوات هنا عبر JavaScript -->
-            </ul>
         </div>
 
-        <div id="stats-tab" class="tab-content">
-            <div class="stats-container" id="stats-container">
-                <!-- سيتم إضافة إحصائيات الأيام هنا عبر JavaScript -->
+        <div class="main-content">
+            <div class="date-info">
+                <h2 id="currentDate"></h2>
+                <p id="hijriDate"></p>
             </div>
+
+            <div class="prayers-grid" id="prayersGrid">
+                <!-- سيتم إنشاء بطاقات الصلوات هنا -->
+            </div>
+
+            <div class="stats">
+                <h3 style="text-align: center; margin-bottom: 20px; font-size: 1.5rem;">إحصائيات اليوم</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="completedCount">0</div>
+                        <div class="stat-label">صلوات مكتملة</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="onTimeCount">0</div>
+                        <div class="stat-label">في الوقت</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="mosquePrayers">0</div>
+                        <div class="stat-label">في المسجد</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="completionRate">0%</div>
+                        <div class="stat-label">نسبة الإنجاز</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>اللهم أعنا على ذكرك وشكرك وحسن عبادتك • جعله الله في ميزان حسناتك</p>
         </div>
     </div>
 
     <script>
-        // قائمة الصلوات
-        const prayers = [
-            { id: 'fajr', name: 'الفجر', doneMessages: ['أحسنت، ثبتك الله', 'بارك الله فيك', 'نور الله وجهك'], notDoneMessages: ['صلّي بسرعة قبل ما الجهاز ينفجر', 'لا تنسى الصلاة قبل فوات الأوان', 'سارع إلى الصلاة'] },
-            { id: 'dhuhr', name: 'الظهر', doneMessages: ['أحسنت، ثبتك الله', 'بارك الله فيك', 'جزاك الله خيراً'], notDoneMessages: ['صلّي بسرعة قبل ما الجهاز ينفجر', 'الصلاة خير من النوم', 'حافظ على صلاتك'] },
-            { id: 'asr', name: 'العصر', doneMessages: ['أحسنت، ثبتك الله', 'بارك الله فيك', 'أثابك الله'], notDoneMessages: ['صلّي بسرعة قبل ما الجهاز ينفجر', 'لا تضيع الصلاة', 'الصلاة نور'] },
-            { id: 'maghrib', name: 'المغرب', doneMessages: ['أحسنت، ثبتك الله', 'بارك الله فيك', 'رفع الله قدرك'], notDoneMessages: ['صلّي بسرعة قبل ما الجهاز ينفجر', 'سارع إلى الصلاة', 'لا تؤجل الصلاة'] },
-            { id: 'isha', name: 'العشاء', doneMessages: ['أحسنت، ثبتك الله', 'بارك الله فيك', 'أحسن الله إليك'], notDoneMessages: ['صلّي بسرعة قبل ما الجهاز ينفجر', 'الصلاة عمود الدين', 'أدِّ فرضك'] }
-        ];
-
-        // نظام النقاط
-        const scoringSystem = {
-            prayerDone: 10,           // أساسي لأداء الصلاة
-            onTime: 5,                // صلاة في وقتها
-            inMosque: 5,              // صلاة في المسجد
-            maxScorePerPrayer: 20,    // الحد الأقصى للنقاط لكل صلاة
-            maxDailyScore: 100        // الحد الأقصى للنقاط اليومية
+        // أوقات الصلاة لكل منطقة (مقربة)
+        const prayerTimes = {
+            jordan: {
+                fajr: "05:15", dhuhr: "12:30", asr: "15:45", maghrib: "18:20", isha: "19:45"
+            },
+            saudi: {
+                fajr: "05:00", dhuhr: "12:15", asr: "15:30", maghrib: "18:05", isha: "19:30"
+            },
+            egypt: {
+                fajr: "04:45", dhuhr: "12:00", asr: "15:15", maghrib: "17:50", isha: "19:15"
+            },
+            uae: {
+                fajr: "05:10", dhuhr: "12:25", asr: "15:40", maghrib: "18:15", isha: "19:40"
+            },
+            kuwait: {
+                fajr: "04:55", dhuhr: "12:10", asr: "15:25", maghrib: "18:00", isha: "19:25"
+            },
+            qatar: {
+                fajr: "04:50", dhuhr: "12:05", asr: "15:20", maghrib: "17:55", isha: "19:20"
+            },
+            lebanon: {
+                fajr: "05:20", dhuhr: "12:35", asr: "15:50", maghrib: "18:25", isha: "19:50"
+            },
+            syria: {
+                fajr: "05:25", dhuhr: "12:40", asr: "15:55", maghrib: "18:30", isha: "19:55"
+            },
+            palestine: {
+                fajr: "05:30", dhuhr: "12:45", asr: "16:00", maghrib: "18:35", isha: "20:00"
+            },
+            iraq: {
+                fajr: "05:05", dhuhr: "12:20", asr: "15:35", maghrib: "18:10", isha: "19:35"
+            }
         };
 
-        // أسماء الأيام بالعربية
-        const arabicDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-        const arabicMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+        const prayerNames = {
+            fajr: "الفجر",
+            dhuhr: "الظهر", 
+            asr: "العصر",
+            maghrib: "المغرب",
+            isha: "العشاء"
+        };
 
-        // الحصول على التاريخ الحالي
-        function getCurrentDate() {
-            const now = new Date();
-            const day = now.getDate();
-            const month = arabicMonths[now.getMonth()];
-            const year = now.getFullYear();
-            const weekday = arabicDays[now.getDay()];
-            return `${weekday} ${day} ${month} ${year}`;
-        }
+        let prayerData = {};
+        let currentDate = new Date();
+        let selectedCountry = 'jordan';
 
-        // تنسيق التاريخ كمفتاح للتخزين
-        function getDateKey(date = new Date()) {
-            return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-        }
-
-        // إعداد التاريخ الحالي
-        document.getElementById('current-date').textContent = getCurrentDate();
-        document.getElementById('score-max').textContent = scoringSystem.maxDailyScore;
-
-        // تهيئة الصلوات
-        function initializePrayers() {
-            const dateKey = getDateKey();
-            let prayers_status = JSON.parse(localStorage.getItem(`prayers_${dateKey}`)) || {};
-            const prayersList = document.getElementById('prayers-list');
-            prayersList.innerHTML = '';
-
-            prayers.forEach(prayer => {
-                // التحقق من حالة الصلاة الحالية أو تهيئتها
-                if (!prayers_status[prayer.id]) {
-                    prayers_status[prayer.id] = {
-                        done: false,
-                        onTime: true, // افتراضيًا في الوقت
-                        inMosque: false,
-                        score: 0
-                    };
-                }
-
-                const prayerStatus = prayers_status[prayer.id];
-
-                // إنشاء عنصر الصلاة
-                const prayerItem = document.createElement('li');
-                prayerItem.className = `prayer-item ${prayerStatus.done ? 'done' : ''}`;
-                prayerItem.dataset.id = prayer.id;
-
-                // إنشاء رأس عنصر الصلاة
-                const prayerHeader = document.createElement('div');
-                prayerHeader.className = 'prayer-header';
-                
-                // إضافة مستمع أحداث للضغط على رأس الصلاة لفتح/إغلاق التفاصيل
-                prayerHeader.addEventListener('click', function(e) {
-                    // إذا كان المستخدم نقر على checkbox، لا تقم بفتح/إغلاق التفاصيل
-                    if (e.target.type === 'checkbox') return;
-                    const details = prayerItem.querySelector('.prayer-details');
-                    if (prayerStatus.done) {
-                        details.classList.toggle('show');
-                    }
-                });
-
-                // زر التحقق من أداء الصلاة
-                const prayerCheckbox = document.createElement('input');
-                prayerCheckbox.type = 'checkbox';
-                prayerCheckbox.className = 'prayer-checkbox';
-                prayerCheckbox.checked = prayerStatus.done;
-                prayerCheckbox.addEventListener('change', function() {
-                    togglePrayer(prayer.id, this.checked);
-                });
-
-                // اسم الصلاة
-                const prayerName = document.createElement('div');
-                prayerName.className = 'prayer-name';
-                prayerName.textContent = prayer.name;
-
-                // مؤشر النقاط
-                const scoreIndicator = document.createElement('div');
-                scoreIndicator.className = 'score-indicator';
-                
-                const scoreValue = document.createElement('span');
-                scoreValue.className = 'prayer-score';
-                updateScoreClass(scoreValue, prayerStatus.score);
-                scoreValue.textContent = prayerStatus.score;
-                
-                const scoreIcon = document.createElement('span');
-                scoreIcon.className = 'score-icon';
-                scoreIcon.textContent = '★';
-                
-                scoreIndicator.appendChild(scoreValue);
-                scoreIndicator.appendChild(scoreIcon);
-
-                // إضافة العناصر إلى رأس الصلاة
-                prayerHeader.appendChild(prayerCheckbox);
-                prayerHeader.appendChild(prayerName);
-                prayerHeader.appendChild(scoreIndicator);
-
-                // الرسالة التحفيزية
-                const prayerMessage = document.createElement('div');
-                prayerMessage.className = `prayer-message ${prayerStatus.done ? 'prayer-done-message show' : 'prayer-not-done-message'}`;
-                
-                // اختيار رسالة عشوائية
-                let messages = prayerStatus.done ? prayer.doneMessages : prayer.notDoneMessages;
-                let randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                prayerMessage.textContent = randomMessage;
-
-                // تفاصيل الصلاة (تظهر فقط عند تحديد الصلاة)
-                const prayerDetails = document.createElement('div');
-                prayerDetails.className = `prayer-details ${prayerStatus.done ? 'show' : ''}`;
-
-                // صف التفاصيل 1: في الوقت أو قضاء
-                const timeDetailRow = document.createElement('div');
-                timeDetailRow.className = 'detail-row';
-
-                const timeLabel = document.createElement('div');
-                timeLabel.className = 'detail-label';
-                timeLabel.textContent = 'وقت الصلاة:';
-
-                const timeOptions = document.createElement('div');
-                timeOptions.className = 'prayer-options';
-
-                const onTimeBtn = document.createElement('button');
-                onTimeBtn.className = `option-btn ${prayerStatus.onTime ? 'selected' : ''}`;
-                onTimeBtn.textContent = 'في الوقت';
-                onTimeBtn.addEventListener('click', function() {
-                    updatePrayerDetail(prayer.id, 'onTime', true);
-                });
-
-                const lateBtn = document.createElement('button');
-                lateBtn.className = `option-btn ${!prayerStatus.onTime ? 'selected' : ''}`;
-                lateBtn.textContent = 'قضاء';
-                lateBtn.addEventListener('click', function() {
-                    updatePrayerDetail(prayer.id, 'onTime', false);
-                });
-
-                timeOptions.appendChild(onTimeBtn);
-                timeOptions.appendChild(lateBtn);
-                timeDetailRow.appendChild(timeLabel);
-                timeDetailRow.appendChild(timeOptions);
-
-                // صف التفاصيل 2: في المسجد أو في البيت
-                const placeDetailRow = document.createElement('div');
-                placeDetailRow.className = 'detail-row';
-
-                const placeLabel = document.createElement('div');
-                placeLabel.className = 'detail-label';
-                placeLabel.textContent = 'مكان الصلاة:';
-
-                const placeOptions = document.createElement('div');
-                placeOptions.className = 'prayer-options';
-
-                const mosqueBtn = document.createElement('button');
-                mosqueBtn.className = `option-btn ${prayerStatus.inMosque ? 'selected' : ''}`;
-                mosqueBtn.textContent = 'في المسجد';
-                mosqueBtn.addEventListener('click', function() {
-                    updatePrayerDetail(prayer.id, 'inMosque', true);
-                });
-
-                const homeBtn = document.createElement('button');
-                homeBtn.className = `option-btn ${!prayerStatus.inMosque ? 'selected' : ''}`;
-                homeBtn.textContent = 'في البيت';
-                homeBtn.addEventListener('click', function() {
-                    updatePrayerDetail(prayer.id, 'inMosque', false);
-                });
-
-                placeOptions.appendChild(mosqueBtn);
-                placeOptions.appendChild(homeBtn);
-                placeDetailRow.appendChild(placeLabel);
-                placeDetailRow.appendChild(placeOptions);
-
-                // إضافة صفوف التفاصيل إلى قسم التفاصيل
-                prayerDetails.appendChild(timeDetailRow);
-                prayerDetails.appendChild(placeDetailRow);
-
-                // إضافة العناصر إلى عنصر الصلاة
-                prayerItem.appendChild(prayerHeader);
-                prayerItem.appendChild(prayerMessage);
-                prayerItem.appendChild(prayerDetails);
-
-                // إضافة عنصر الصلاة إلى القائمة
-                prayersList.appendChild(prayerItem);
+        // تهيئة التطبيق
+        function initApp() {
+            // تعيين التاريخ الحالي
+            document.getElementById('dateInput').value = currentDate.toISOString().split('T')[0];
+            
+            // تحديث العرض
+            updateDisplay();
+            
+            // إضافة مستمعي الأحداث
+            document.getElementById('dateInput').addEventListener('change', function() {
+                currentDate = new Date(this.value);
+                updateDisplay();
             });
-
-            // حفظ الحالة المحدثة
-            localStorage.setItem(`prayers_${dateKey}`, JSON.stringify(prayers_status));
             
-            updateProgressBar();
-            updateDailyScore();
+            document.getElementById('countrySelect').addEventListener('change', function() {
+                selectedCountry = this.value;
+                updateDisplay();
+            });
         }
 
-        // تحديث صنف النقاط (لتغيير اللون)
-        function updateScoreClass(element, score) {
-            element.classList.remove('score-high', 'score-medium', 'score-low');
+        // تحديث العرض
+        function updateDisplay() {
+            updateDateInfo();
+            createPrayerCards();
+            updateStats();
+        }
+
+        // تحديث معلومات التاريخ
+        function updateDateInfo() {
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
             
-            if (score >= 15) {
-                element.classList.add('score-high');
-            } else if (score >= 10) {
-                element.classList.add('score-medium');
-            } else {
-                element.classList.add('score-low');
+            document.getElementById('currentDate').textContent = 
+                currentDate.toLocaleDateString('ar-SA', options);
+            
+            // تاريخ هجري تقريبي
+            const hijriDate = getApproxHijriDate(currentDate);
+            document.getElementById('hijriDate').textContent = hijriDate;
+        }
+
+        // الحصول على التاريخ الهجري التقريبي
+        function getApproxHijriDate(date) {
+            const hijriYear = Math.floor((date.getFullYear() - 622) * 1.030684) + 1;
+            const months = [
+                'محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الثانية',
+                'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'
+            ];
+            const monthIndex = date.getMonth();
+            return `${date.getDate()} ${months[monthIndex]} ${hijriYear} هـ`;
+        }
+
+        // إنشاء بطاقات الصلوات
+        function createPrayerCards() {
+            const grid = document.getElementById('prayersGrid');
+            grid.innerHTML = '';
+            
+            const dateKey = currentDate.toISOString().split('T')[0];
+            if (!prayerData[dateKey]) {
+                prayerData[dateKey] = {};
             }
+            
+            const prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+            
+            prayers.forEach(prayer => {
+                const card = createPrayerCard(prayer, dateKey);
+                grid.appendChild(card);
+            });
         }
 
-        // تبديل حالة الصلاة
-        function togglePrayer(prayerId, isDone) {
-            const dateKey = getDateKey();
-            let prayers_status = JSON.parse(localStorage.getItem(`prayers_${dateKey}`)) || {};
+        // إنشاء بطاقة صلاة واحدة
+        function createPrayerCard(prayerKey, dateKey) {
+            const card = document.createElement('div');
+            card.className = 'prayer-card';
             
-            // إذا لم تكن الصلاة موجودة، قم بإنشائها
-            if (!prayers_status[prayerId]) {
-                prayers_status[prayerId] = {
-                    done: false,
-                    onTime: true,
-                    inMosque: false,
-                    score: 0
+            if (!prayerData[dateKey][prayerKey]) {
+                prayerData[dateKey][prayerKey] = {
+                    completed: false,
+                    onTime: false,
+                    delayed: false,
+                    missed: false,
+                    mosque: false,
+                    home: false,
+                    qada: false
                 };
             }
             
-            // تحديث حالة الصلاة
-            prayers_status[prayerId].done = isDone;
+            const data = prayerData[dateKey][prayerKey];
+            const prayerTime = prayerTimes[selectedCountry][prayerKey];
             
-            // حساب النقاط
-            calculatePrayerScore(prayers_status[prayerId]);
+            // تحديد حالة البطاقة
+            if (data.completed) card.classList.add('completed');
+            if (data.missed) card.classList.add('missed');
+            if (data.delayed) card.classList.add('delayed');
             
-            // حفظ التغييرات
-            localStorage.setItem(`prayers_${dateKey}`, JSON.stringify(prayers_status));
+            card.innerHTML = `
+                <div class="prayer-header">
+                    <div class="prayer-name">${prayerNames[prayerKey]}</div>
+                    <div class="prayer-time">${prayerTime}</div>
+                </div>
+                
+                <div class="prayer-options">
+                    <div class="option-group">
+                        <div class="option-title">حالة الصلاة:</div>
+                        <div class="checkbox-group">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" ${data.completed ? 'checked' : ''} 
+                                       onchange="updatePrayerStatus('${dateKey}', '${prayerKey}', 'completed', this.checked)">
+                                <span>صليت ✅</span>
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" ${data.missed ? 'checked' : ''} 
+                                       onchange="updatePrayerStatus('${dateKey}', '${prayerKey}', 'missed', this.checked)">
+                                <span>فاتت ❌</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <div class="option-title">التوقيت:</div>
+                        <div class="checkbox-group">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" ${data.onTime ? 'checked' : ''} 
+                                       onchange="updatePrayerStatus('${dateKey}', '${prayerKey}', 'onTime', this.checked)">
+                                <span>في الوقت ⏰</span>
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" ${data.delayed ? 'checked' : ''} 
+                                       onchange="updatePrayerStatus('${dateKey}', '${prayerKey}', 'delayed', this.checked)">
+                                <span>متأخر ⏳</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <div class="option-title">المكان:</div>
+                        <div class="checkbox-group">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" ${data.mosque ? 'checked' : ''} 
+                                       onchange="updatePrayerStatus('${dateKey}', '${prayerKey}', 'mosque', this.checked)">
+                                <span>في المسجد 🕌</span>
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" ${data.home ? 'checked' : ''} 
+                                       onchange="updatePrayerStatus('${dateKey}', '${prayerKey}', 'home', this.checked)">
+                                <span>في البيت 🏠</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <div class="option-title">أخرى:</div>
+                        <div class="checkbox-group">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" ${data.qada ? 'checked' : ''} 
+                                       onchange="updatePrayerStatus('${dateKey}', '${prayerKey}', 'qada', this.checked)">
+                                <span>قضاء 🔄</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            `;
             
-            // تحديث واجهة المستخدم
-            updatePrayerUI(prayerId, prayers_status[prayerId]);
-            
-            // تحديث شريط التقدم والنقاط اليومية
-            updateProgressBar();
-            updateDailyScore();
+            return card;
         }
 
-        // تحديث تفاصيل الصلاة
-        function updatePrayerDetail(prayerId, detail, value) {
-            const dateKey = getDateKey();
-            let prayers_status = JSON.parse(localStorage.getItem(`prayers_${dateKey}`)) || {};
-            
-            // إذا لم تكن الصلاة موجودة، قم بإنشائها
-            if (!prayers_status[prayerId]) {
-                prayers_status[prayerId] = {
-                    done: false,
-                    onTime: true,
-                    inMosque: false,
-                    score: 0
+        // تحديث حالة الصلاة
+        function updatePrayerStatus(dateKey, prayerKey, status, checked) {
+            if (!prayerData[dateKey]) prayerData[dateKey] = {};
+            if (!prayerData[dateKey][prayerKey]) {
+                prayerData[dateKey][prayerKey] = {
+                    completed: false, onTime: false, delayed: false, 
+                    missed: false, mosque: false, home: false, qada: false
                 };
             }
             
-            // تحديث التفصيل المطلوب
-            prayers_status[prayerId][detail] = value;
+            prayerData[dateKey][prayerKey][status] = checked;
             
-            // حساب النقاط
-            calculatePrayerScore(prayers_status[prayerId]);
-            
-            // حفظ التغييرات
-            localStorage.setItem(`prayers_${dateKey}`, JSON.stringify(prayers_status));
-            
-            // تحديث واجهة المستخدم
-            updatePrayerUI(prayerId, prayers_status[prayerId]);
-            
-            // تحديث النقاط اليومية
-            updateDailyScore();
-        }
-
-        // حساب نقاط الصلاة
-        function calculatePrayerScore(prayerStatus) {
-            let score = 0;
-            
-            if (prayerStatus.done) {
-                // النقاط الأساسية لأداء الصلاة
-                score += scoringSystem.prayerDone;
-                
-                // نقاط إضافية للصلاة في وقتها
-                if (prayerStatus.onTime) {
-                    score += scoringSystem.onTime;
-                }
-                
-                // نقاط إضافية للصلاة في المسجد
-                if (prayerStatus.inMosque) {
-                    score += scoringSystem.inMosque;
-                }
+            // منطق التحديث التلقائي
+            if (status === 'completed' && checked) {
+                prayerData[dateKey][prayerKey].missed = false;
+            } else if (status === 'missed' && checked) {
+                prayerData[dateKey][prayerKey].completed = false;
+                prayerData[dateKey][prayerKey].onTime = false;
+                prayerData[dateKey][prayerKey].delayed = false;
             }
             
-            // تحديث النقاط المحسوبة
-            prayerStatus.score = score;
-            
-            return score;
-        }
-
-        // تحديث واجهة المستخدم للصلاة
-        function updatePrayerUI(prayerId, prayerStatus) {
-            const prayerItem = document.querySelector(`.prayer-item[data-id="${prayerId}"]`);
-            if (!prayerItem) return;
-            
-            // تحديث فئة الصلاة
-            if (prayerStatus.done) {
-                prayerItem.classList.add('done');
-            } else {
-                prayerItem.classList.remove('done');
+            if (status === 'onTime' && checked) {
+                prayerData[dateKey][prayerKey].delayed = false;
+            } else if (status === 'delayed' && checked) {
+                prayerData[dateKey][prayerKey].onTime = false;
             }
             
-            // تحديث قسم التفاصيل
-            const prayerDetails = prayerItem.querySelector('.prayer-details');
-            if (prayerStatus.done) {
-                prayerDetails.classList.add('show');
-            } else {
-                prayerDetails.classList.remove('show');
+            if (status === 'mosque' && checked) {
+                prayerData[dateKey][prayerKey].home = false;
+            } else if (status === 'home' && checked) {
+                prayerData[dateKey][prayerKey].mosque = false;
             }
             
-            // تحديث الرسالة التحفيزية
-            const prayerMessage = prayerItem.querySelector('.prayer-message');
+            // حفظ البيانات
+            saveData();
             
-            if (prayerStatus.done) {
-                prayerMessage.classList.remove('prayer-not-done-message');
-                prayerMessage.classList.add('prayer-done-message', 'show');
-                
-                // اختيار رسالة عشوائية
-                const prayer = prayers.find(p => p.id === prayerId);
-                let randomMessage = prayer.doneMessages[Math.floor(Math.random() * prayer.doneMessages.length)];
-                prayerMessage.textContent = randomMessage;
-            } else {
-                prayerMessage.classList.remove('prayer-done-message');
-                prayerMessage.classList.add('prayer-not-done-message', 'show');
-                
-                // اختيار رسالة عشوائية
-                const prayer = prayers.find(p => p.id === prayerId);
-                let randomMessage = prayer.notDoneMessages[Math.floor(Math.random() * prayer.notDoneMessages.length)];
-                prayerMessage.textContent = randomMessage;
-            }
-            
-            // إظهار الرسالة ثم إخفاؤها بعد 3 ثوانٍ
-            setTimeout(() => {
-                prayerMessage.classList.remove('show');
-            }, 3000);
-            
-            // تحديث النقاط
-            const scoreValue = prayerItem.querySelector('.prayer-score');
-            scoreValue.textContent = prayerStatus.score;
-            updateScoreClass(scoreValue, prayerStatus.score);
-            
-            // تحديث أزرار الخيارات
-            const timeOptions = prayerItem.querySelectorAll('.prayer-options')[0];
-            const onTimeBtn = timeOptions.querySelector('.option-btn:nth-child(1)');
-            const lateBtn = timeOptions.querySelector('.option-btn:nth-child(2)');
-            
-            onTimeBtn.classList.toggle('selected', prayerStatus.onTime);
-            lateBtn.classList.toggle('selected', !prayerStatus.onTime);
-            
-            const placeOptions = prayerItem.querySelectorAll('.prayer-options')[1];
-            const mosqueBtn = placeOptions.querySelector('.option-btn:nth-child(1)');
-            const homeBtn = placeOptions.querySelector('.option-btn:nth-child(2)');
-            
-            mosqueBtn.classList.toggle('selected', prayerStatus.inMosque);
-            homeBtn.classList.toggle('selected', !prayerStatus.inMosque);
-        }
-
-        // تحديث شريط التقدم
-        function updateProgressBar() {
-            const dateKey = getDateKey();
-            let prayers_status = JSON.parse(localStorage.getItem(`prayers_${dateKey}`)) || {};
-            
-            // حساب عدد الصلوات المؤداة
-            let donePrayers = 0;
-            prayers.forEach(prayer => {
-                if (prayers_status[prayer.id] && prayers_status[prayer.id].done) {
-                    donePrayers++;
-                }
-            });
-            
-            // تحديث شريط التقدم
-            const percentage = (donePrayers / prayers.length) * 100;
-            document.getElementById('progress-fill').style.width = `${percentage}%`;
-            document.getElementById('progress-text').textContent = `${donePrayers} من ${prayers.length} (${Math.round(percentage)}%)`;
-        }
-
-        // تحديث النقاط اليومية
-        function updateDailyScore() {
-            const dateKey = getDateKey();
-            let prayers_status = JSON.parse(localStorage.getItem(`prayers_${dateKey}`)) || {};
-            
-            // حساب مجموع النقاط
-            let totalScore = 0;
-            prayers.forEach(prayer => {
-                if (prayers_status[prayer.id]) {
-                    totalScore += prayers_status[prayer.id].score;
-                }
-            });
-            
-            // تحديث عرض النقاط
-            document.getElementById('score-value').textContent = totalScore;
-            
-            // تغيير لون النقاط اليومية حسب القيمة
-            const dailyScore = document.getElementById('daily-score');
-            dailyScore.style.backgroundColor = getTotalScoreColor(totalScore);
-        }
-
-        // الحصول على لون النقاط حسب القيمة
-        function getTotalScoreColor(score) {
-            const percentage = (score / scoringSystem.maxDailyScore) * 100;
-            
-            if (percentage >= 80) {
-                return '#e8f5e9'; // أخضر فاتح
-            } else if (percentage >= 50) {
-                return '#fff8e1'; // أصفر فاتح
-            } else {
-                return '#ffebee'; // أحمر فاتح
-            }
+            // تحديث العرض
+            updateDisplay();
         }
 
         // تحديث الإحصائيات
         function updateStats() {
-            const statsContainer = document.getElementById('stats-container');
-            statsContainer.innerHTML = '';
+            const dateKey = currentDate.toISOString().split('T')[0];
+            const dayData = prayerData[dateKey] || {};
             
-            // الحصول على الأيام السبعة الماضية
-            const dates = getLast7Days();
+            let completed = 0;
+            let onTime = 0;
+            let mosquePrayers = 0;
             
-            // إنشاء إحصائيات لكل يوم
-            dates.forEach(date => {
-                const { dateKey, formattedDate } = date;
-                const prayers_status = JSON.parse(localStorage.getItem(`prayers_${dateKey}`)) || {};
-                
-                // حساب إحصائيات اليوم
-                let donePrayers = 0;
-                let inMosquePrayers = 0;
-                let onTimePrayers = 0;
-                let totalScore = 0;
-                
-                prayers.forEach(prayer => {
-                    if (prayers_status[prayer.id] && prayers_status[prayer.id].done) {
-                        donePrayers++;
-                        
-                        if (prayers_status[prayer.id].inMosque) {
-                            inMosquePrayers++;
-                        }
-                        
-                        if (prayers_status[prayer.id].onTime) {
-                            onTimePrayers++;
-                        }
-                        
-                        totalScore += prayers_status[prayer.id].score || 0;
-                    }
-                });
-                
-                // حساب النسبة المئوية
-                const percentage = (donePrayers / prayers.length) * 100;
-                
-                // إنشاء عنصر الإحصائيات
-                const dayStats = document.createElement('div');
-                dayStats.className = 'day-stats';
-                
-                const dayStatsHeader = document.createElement('div');
-                dayStatsHeader.className = 'day-stats-header';
-                
-                const dayName = document.createElement('div');
-                dayName.className = 'day-name';
-                dayName.textContent = formattedDate;
-                
-                const dayPercentage = document.createElement('div');
-                dayPercentage.className = 'day-percentage';
-                dayPercentage.textContent = `${donePrayers}/${prayers.length} (${Math.round(percentage)}%)`;
-                
-                const dayProgress = document.createElement('div');
-                dayProgress.className = 'day-progress';
-                
-                const dayProgressFill = document.createElement('div');
-                dayProgressFill.className = 'day-progress-fill';
-                dayProgressFill.style.width = `${percentage}%`;
-                
-                dayProgress.appendChild(dayProgressFill);
-                dayStatsHeader.appendChild(dayName);
-                dayStatsHeader.appendChild(dayPercentage);
-                
-                // إضافة التفاصيل
-                const dayDetails = document.createElement('div');
-                dayDetails.className = 'day-details';
-                
-                const scoreDetail = document.createElement('div');
-                scoreDetail.className = 'day-detail';
-                scoreDetail.innerHTML = `<span class="day-detail-icon">★</span> النقاط: ${totalScore}`;
-                
-                const mosqueDetail = document.createElement('div');
-                mosqueDetail.className = 'day-detail';
-                mosqueDetail.innerHTML = `<span class="day-detail-icon">🕌</span> في المسجد: ${inMosquePrayers}`;
-                
-                const timeDetail = document.createElement('div');
-                timeDetail.className = 'day-detail';
-                timeDetail.innerHTML = `<span class="day-detail-icon">⏰</span> في الوقت: ${onTimePrayers}`;
-                
-                dayDetails.appendChild(scoreDetail);
-                dayDetails.appendChild(mosqueDetail);
-                dayDetails.appendChild(timeDetail);
-                
-                // تجميع عناصر الإحصائيات
-                dayStats.appendChild(dayStatsHeader);
-                dayStats.appendChild(dayProgress);
-                dayStats.appendChild(dayDetails);
-                
-                statsContainer.appendChild(dayStats);
+            Object.values(dayData).forEach(prayer => {
+                if (prayer.completed) completed++;
+                if (prayer.onTime) onTime++;
+                if (prayer.mosque) mosquePrayers++;
             });
+            
+            const completionRate = Math.round((completed / 5) * 100);
+            
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('onTimeCount').textContent = onTime;
+            document.getElementById('mosquePrayers').textContent = mosquePrayers;
+            document.getElementById('completionRate').textContent = completionRate + '%';
         }
 
-        // الحصول على الأيام السبعة الماضية
-        function getLast7Days() {
-            const dates = [];
-            const today = new Date();
-            
-            // بدء من -6 أيام (قبل 6 أيام) وصولاً إلى اليوم الحالي (0)
-            for (let i = 0; i <= 6; i++) {
-                const date = new Date(today);
-                // اطرح الأيام بدءًا من -6 وصولاً إلى 0 (اليوم)
-                date.setDate(date.getDate() - (6 - i));
-                
-                const day = date.getDate();
-                const month = date.getMonth() + 1;
-                const year = date.getFullYear();
-                
-                const dateKey = `${year}-${month}-${day}`;
-                const weekday = arabicDays[date.getDay()];
-                const formattedDate = `${weekday} ${day}/${month}`;
-                
-                dates.push({ dateKey, formattedDate });
+        // إعادة تعيين اليوم
+        function resetDay() {
+            if (confirm('هل أنت متأكد من إعادة تعيين بيانات هذا اليوم؟')) {
+                const dateKey = currentDate.toISOString().split('T')[0];
+                delete prayerData[dateKey];
+                saveData();
+                updateDisplay();
             }
-            return dates;
         }
 
-        // التبديل بين علامات التبويب
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                // إزالة الفئة النشطة من جميع علامات التبويب
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // إضافة الفئة النشطة إلى علامة التبويب المحددة
-                this.classList.add('active');
-                document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
-                
-                // تحديث الإحصائيات إذا تم النقر على علامة تبويب الإحصائيات
-                if (this.dataset.tab === 'stats') {
-                    updateStats();
-                }
-            });
-        });
+        // حفظ البيانات
+        function saveData() {
+            // في بيئة الموقع الحقيقية، يمكن حفظ البيانات في localStorage
+            // لكن هنا سنتركها في الذاكرة فقط
+            console.log('تم حفظ البيانات:', prayerData);
+        }
 
-        // تهيئة التطبيق عند تحميل الصفحة
-        window.addEventListener('load', () => {
-            initializePrayers();
-            
-            // التحقق من تغير التاريخ كل دقيقة
-            setInterval(() => {
-                const currentDateDisplay = document.getElementById('current-date').textContent;
-                const newDateDisplay = getCurrentDate();
-                
-                if (currentDateDisplay !== newDateDisplay) {
-                    document.getElementById('current-date').textContent = newDateDisplay;
-                    initializePrayers();
-                }
-            }, 60000);
+        // تحميل البيانات
+        function loadData() {
+            // في بيئة الموقع الحقيقية، يمكن تحميل البيانات من localStorage
+            console.log('تم تحميل البيانات');
+        }
+
+        // بدء التطبيق عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            initApp();
         });
     </script>
 </body>
